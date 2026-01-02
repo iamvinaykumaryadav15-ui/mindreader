@@ -1,0 +1,23 @@
+{
+  "name": "mind_reader_project_nodejs",
+  "version": "1.0.0",
+  "description": "A magical mind reader game with a user account system.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "geoip-lite": "^1.4.10",
+    "mysql2": "^3.10.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "paypal-rest-sdk": "^1.8.1",
+    "razorpay": "^2.9.4"
+  }
+}

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Mind Reader</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700,900&family=Playfair+Display:wght@600&family=Raleway:wght@400,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1787/1787077.png">
+</head>
+<body>
+    <div id="particles-js"></div>
+    <div id="background-animation" class="bg-animation bg-animation-1"></div>
+    
+    <div class="header-controls">
+        <a href="/" class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/1787/1787077.png" alt="Mind Reader Brain Logo">
+        </a>
+        <div class="auth-section">
+            <% if (locals.user) { %>
+                <span class="welcome-message">Welcome, <%= user.email %>!</span>
+                <a href="/logout" class="auth-button">Logout</a>
+            <% } else { %>
+                <a href="/" class="auth-button">Play Game</a>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="content-wrapper about-page">
+        <h1 class="animated-text">About Mind Reader</h1>
+        <div class="about-content">
+            <h2>Our Mission</h2>
+            <p>Welcome to Mind Reader, where magic meets mathematics. Our mission is to create a moment of wonder and surprise, reminding everyone of the simple joys of a clever trick. We believe that entertainment can be both fun and intellectually stimulating, and our game is a testament to that philosophy.</p>
+            
+            <h2>The Secret Behind the Magic</h2>
+            <p>Ever wondered how we can read your mind? The secret isn't supernatural—it's a beautiful piece of algebra! The steps we guide you through are carefully designed to always lead to a predictable result based on the even number you add. It's a classic mathematical principle dressed up as a magical experience.</p>
+            <p>No matter what number you start with, the sequence of operations cancels it out, leaving only half of the number we asked you to add. It's a perfect illusion that showcases the elegance of numbers.</p>
+
+            <h2>Contact Us</h2>
+            <p>Have questions, feedback, or need support? We'd love to hear from you. Please don't hesitate to reach out to our dedicated support team.</p>
+            <p class="support-email">
+                <a href="mailto:support@mindreader.fun">support@mindreader.fun</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- // ... (rest of the file) ... -->
+
+    <!-- Footer (Updated) -->
+    <footer class="site-footer">
+        <p>&copy; 2025 Mind Reader. All Rights Reserved. | <a href="/about">About</a> | <a href="/disclaimer">Disclaimer</a> | For support, contact: <a href="mailto:support@mindreader.fun">support@mindreader.fun</a></p>
+    </footer>
+
+<!-- // ... (rest of the file) ... -->
+
+
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/js/script.js"></script> <!-- Reusing main script for particles -->
+</body>
+</html>
+

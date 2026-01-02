@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mind Reader - Interactive Mind Reading Game</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700,900&family=Playfair+Display:wght@600&family=Crimson+Pro:wght@600&family=Cormorant+Garamond:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/1787/1787077.png">
+    
+    <!-- Payment Gateway Scripts -->
+    <!-- Braintree script removed, only Razorpay remains -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <div class="modal-tabs">
+                <button class="tab-link active" data-tab="login">Login</button>
+                <button class="tab-link" data-tab="register">Register</button>
+            </div>
+            <div id="login" class="tab-content active">
+                <h2>Login to Your Account</h2>
+                <a href="/auth/google" class="google-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo"> Sign in with Google</a>
+                <div class="divider">OR</div>
+                <form action="/login" method="POST">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <input type="password" name="password" placeholder="Enter your password" required>
+                    <button type="submit">Login</button>
+                </form>
+            </div>
+            <div id="register" class="tab-content">
+                <h2>Create a New Account</h2>
+                <a href="/auth/google" class="google-btn"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google logo"> Sign up with Google</a>
+                <div class="divider">OR</div>
+                <form action="/register" method="POST">
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    <input type="password" name="password" placeholder="Choose a password (min. 6 characters)" required>
+                    <button type="submit">Register</button>
+                </form>
+            </div>
+            <% if (locals.error) { %><p class="error-message"><%= error %></p><% } %>
+            <% if (locals.message) { %><p class="success-message"><%= message %></p><% } %>
+        </div>
+    </div>
+
+    <!-- Recharge Modal (Credit Plans) -->
+    <div id="rechargeModal" class="modal-overlay">
+         <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2>Our Credit Store ✨</h2>
+            <div class="plans-container"></div>
+            <!-- PayPal button container, only visible when a plan is selected (International) -->
+            <button id="finalPaypalBtn" class="button" style="display:none; margin-top: 20px;">Pay with PayPal (USD)</button>
+        </div>
+    </div>
+
+    <!-- Payment Method Selection Modal -->
+    <div id="paymentMethodModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <h2 id="rechargeModalTitle">Choose Your Payment Method</h2>
+            <div class="payment-options">
+                <button id="paypalOption" class="payment-btn">PayPal</button>
+                <!-- Card button is permanently removed -->
+            </div>
+        </div>
+    </div>
+    
+     <!-- Side Menu -->
+    <div id="sideMenu" class="side-menu">
+        <span class="close-button">&times;</span>
+        <a href="#" id="sideMenuAboutLink">About Us</a>
+        <a href="#" id="sideMenuDisclaimerLink">Disclaimer</a>
+        <a href="mailto:support@mindreader.fun">Support</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <!-- About Us Modal -->
+    <div id="aboutModal" class="modal-overlay">
+        <div class="modal-content info-modal">
+            <span class="close-button">&times;</span>
+            <h1 class="animated-text">About Mind Reader</h1>
+            <div class="about-content">
+                <h2>Our Mission</h2>
+                <p>Welcome to Mind Reader, where magic meets mathematics. Our mission is to create a moment of wonder and surprise, reminding everyone of the simple joys of a clever trick.</p>
+                <h2>The Secret Behind the Magic</h2>
+                <p>Ever wondered how we can read your mind? The secret isn't supernatural—it's a beautiful piece of algebra! The steps we guide you through are carefully designed to always lead to a predictable result.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Disclaimer Modal -->
+    <div id="disclaimerModal" class="modal-overlay">
+        <div class="modal-content info-modal">
+            <span class="close-button">&times;</span>
+            <h1 class="animated-text">Disclaimer</h1>
+            <div class="about-content">
+                <h2>For Entertainment Purposes Only</h2>
+                <p>This website and the game it contains are provided purely for fun and entertainment. The "mind-reading" trick is based on a mathematical principle, not on any psychic ability.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- START: Custom Notification Modal -->
+    <div id="customAlertModal" class="modal-overlay custom-alert-overlay" style="display: none;">
+        <div class="modal-content custom-alert-content">
+            <h2 id="customAlertTitle" class="alert-title"></h2>
+            <p id="customAlertMessage" class="alert-message"></p>
+            <button id="customAlertOkBtn" class="button alert-ok-button">
+                <span>OK</span>
+            </button>
+        </div>
+    </div>
+    <!-- END: Custom Notification Modal -->
+
+    <div id="particles-js"></div>
+    <div id="background-animation" class="bg-animation bg-animation-1"></div>
+    
+    <div class="header-controls">
+        <div class="logo">
+            <img src="https://cdn-icons-png.flaticon.com/512/1787/1787077.png" alt="Mind Reader Brain Logo">
+        </div>
+        
+        <div class="auth-section">
+            <% if (locals.user) { %>
+                <span class="welcome-message">Welcome, <%= user.email %>!</span>
+                <button id="buyCreditsBtn" class="auth-button">Buy Credits</button>
+                <button id="menuBtn" class="menu-button">☰</button>
+            <% } else { %>
+                <button id="loginButton" class="auth-button">Login OR Signup</button>
+            <% } %>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <h1 class="animated-text" id="animatedText">I Can Read Your Mind</h1>
+        <% if (locals.user) { %>
+            <p class="credit-display" id="creditDisplay">Your Credits: <%= user.has_unlimited ? 'Unlimited' : (user.credits || 0) %></p>
+        <% } %>
+        <p id="instructions" class="step-animation">Press "Start" to begin.</p>
+        <button class="button" id="nextButton">
+             <span>Start</span>
+            <svg class="button-glow" width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <filter id="glow"><feGaussianBlur stdDeviation="3.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+                <rect x="0" y="0" width="100%" height="100%" fill="none" stroke="url(#buttonGradient)" stroke-width="2" rx="30" ry="30" filter="url(#glow)"/>
+                <linearGradient id="buttonGradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7B68EE"/><stop offset="50%" stop-color="#DA70D6"/><stop offset="100%" stop-color="#FF1493"/></linearGradient>
+            </svg>
+        </button>
+    </div>
+
+    <footer class="site-footer">
+        <p>&copy; 2025 Mind Reader. | <a href="#" id="footerAboutLink">About</a> | <a href="#" id="footerDisclaimerLink">Disclaimer</a> | Support: <a href="mailto:support@mindreader.fun">support@mindreader.fun</a></p>
+    </footer>
+
+    <div class="controls">
+        <button id="muteButton" class="mute-button">
+            <i class="fas fa-volume-up" id="volumeIcon"></i>
+        </button>
+    </div>
+
+    <audio id="magicSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+    <audio id="finalMusic" src="https://www.soundjay.com/magical/sounds/magic-chime-02.mp3" preload="auto"></audio>
+    <audio id="typingSound" src="https://www.soundjay.com/mechanical/sounds/typewriter-1.mp3" preload="auto"></audio>
+
+    <script>
+        const razorpayKeyId = "<%= locals.razorpayKeyId || '' %>";
+        const userEmail = "<%= locals.user ? user.email : '' %>";
+        const userCountry = "<%= locals.country || 'US' %>";
+    </script>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="/js/script.js"></script>
+</body>
+</html>
